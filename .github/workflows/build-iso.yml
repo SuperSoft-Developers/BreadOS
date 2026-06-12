@@ -1,0 +1,35 @@
+name: Build BreadOS ISO
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build-iso:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install tools
+        run: |
+          sudo apt update
+          sudo apt install -y xorriso
+
+      - name: Build ISO
+        run: |
+          mkdir -p output
+
+          xorriso -as mkisofs \
+            -V "BreadOS" \
+            -o output/BreadOS.iso \
+            iso/
+
+      - name: Upload ISO
+        uses: actions/upload-artifact@v4
+        with:
+          name: BreadOS-ISO
+          path: output/BreadOS.iso
